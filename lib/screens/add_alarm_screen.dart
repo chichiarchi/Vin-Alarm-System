@@ -203,8 +203,9 @@ class _AddAlarmScreenState extends State<AddAlarmScreen> {
             ],
           ),
           const SizedBox(height: 12),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
             children: options.map((opt) {
               final isSelected = _ringDuration == opt['value'];
               return ChoiceChip(
@@ -220,7 +221,7 @@ class _AddAlarmScreenState extends State<AddAlarmScreen> {
                 selectedColor: AppColors.primary,
                 backgroundColor: AppColors.bgSurface,
                 showCheckmark: false,
-                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                   side: BorderSide(
@@ -548,7 +549,7 @@ class _AddAlarmScreenState extends State<AddAlarmScreen> {
               crossAxisCount: 2,
               crossAxisSpacing: 8,
               mainAxisSpacing: 8,
-              childAspectRatio: 2.6,
+              childAspectRatio: 2.1,
             ),
             itemCount: AlertMode.values.length,
             itemBuilder: (_, i) {

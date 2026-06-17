@@ -87,162 +87,187 @@ class _AlarmRingingScreenState extends State<AlarmRingingScreen>
             ),
           ),
           child: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(28),
-              child: Column(
-                children: [
-                  const Spacer(),
-                  // Alarm icon with pulsing effect
-                  AnimatedBuilder(
-                    animation: _pulseAnim,
-                    builder: (_, child) => Transform.scale(
-                      scale: _pulseAnim.value,
-                      child: child,
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final isCompact = constraints.maxHeight < 620;
+                return SingleChildScrollView(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minHeight: constraints.maxHeight,
                     ),
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        // Glow rings
-                        ...List.generate(3, (i) {
-                          return AnimatedBuilder(
-                            animation: _pulseController,
-                            builder: (_, child2) => Container(
-                              width: 120.0 + (i + 1) * 40,
-                              height: 120.0 + (i + 1) * 40,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: AppColors.accentRed.withValues(
-                                    alpha: (0.4 - i * 0.1) *
-                                        (i.isEven
-                                            ? _pulseController.value
-                                            : 1 - _pulseController.value),
-                                  ),
-                                  width: 1.5,
-                                ),
-                              ),
-                            ),
-                          );
-                        }),
-                        Container(
-                          width: 120,
-                          height: 120,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            gradient: RadialGradient(
-                              colors: [
-                                AppColors.accentRed.withAlpha(80),
-                                AppColors.bgCard,
-                              ],
-                            ),
-                            border: Border.all(
-                              color: AppColors.accentRed,
-                              width: 2,
-                            ),
-                          ),
-                          child: AnimatedBuilder(
-                            animation: _shakeAnim,
-                            builder: (_, child) => Transform.translate(
-                              offset: Offset(_shakeAnim.value, 0),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 16),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          SizedBox(height: isCompact ? 10 : 30),
+                          // Alarm icon with pulsing effect
+                          AnimatedBuilder(
+                            animation: _pulseAnim,
+                            builder: (_, child) => Transform.scale(
+                              scale: _pulseAnim.value,
                               child: child,
                             ),
-                            child: const Icon(
-                              Icons.alarm_on,
-                              color: AppColors.accentRed,
-                              size: 52,
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                // Glow rings
+                                ...List.generate(3, (i) {
+                                  return AnimatedBuilder(
+                                    animation: _pulseController,
+                                    builder: (_, child2) => Container(
+                                      width: (isCompact ? 90.0 : 120.0) + (i + 1) * (isCompact ? 25.0 : 40.0),
+                                      height: (isCompact ? 90.0 : 120.0) + (i + 1) * (isCompact ? 25.0 : 40.0),
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                          color: AppColors.accentRed.withAlpha(
+                                            ((0.4 - i * 0.1) *
+                                                    255 *
+                                                    (i.isEven
+                                                        ? _pulseController.value
+                                                        : 1 -
+                                                            _pulseController
+                                                                .value))
+                                                .round(),
+                                          ),
+                                          width: 1.5,
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                }),
+                                Container(
+                                  width: isCompact ? 90 : 120,
+                                  height: isCompact ? 90 : 120,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    gradient: RadialGradient(
+                                      colors: [
+                                        AppColors.accentRed.withAlpha(80),
+                                        AppColors.bgCard,
+                                      ],
+                                    ),
+                                    border: Border.all(
+                                      color: AppColors.accentRed,
+                                      width: 2,
+                                    ),
+                                  ),
+                                  child: AnimatedBuilder(
+                                    animation: _shakeAnim,
+                                    builder: (_, child) => Transform.translate(
+                                      offset: Offset(_shakeAnim.value, 0),
+                                      child: child,
+                                    ),
+                                    child: Icon(
+                                      Icons.alarm_on,
+                                      color: AppColors.accentRed,
+                                      size: isCompact ? 40 : 52,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 48),
+                          SizedBox(height: isCompact ? 20 : 40),
 
-                  // Message
-                  Text(
-                    '${widget.alarm.label.toUpperCase()} TIME',
-                    style: const TextStyle(
-                      fontSize: 14,
-                      letterSpacing: 4,
-                      color: AppColors.textMuted,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  ShaderMask(
-                    shaderCallback: (bounds) =>
-                        AppColors.urgentGradient.createShader(bounds),
-                    child: const Text(
-                      'Time is up!\nReturn now.',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 36,
-                        fontWeight: FontWeight.w800,
-                        color: Colors.white,
-                        height: 1.2,
+                          // Message
+                          Column(
+                            children: [
+                              Text(
+                                '${widget.alarm.label.toUpperCase()} TIME',
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  letterSpacing: 4,
+                                  color: AppColors.textMuted,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+                              ShaderMask(
+                                shaderCallback: (bounds) =>
+                                    AppColors.urgentGradient.createShader(bounds),
+                                child: Text(
+                                  'Time is up!\nReturn now.',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: isCompact ? 28 : 36,
+                                    fontWeight: FontWeight.w800,
+                                    color: Colors.white,
+                                    height: 1.2,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  if (widget.alarm.alertMode.hasSound)
+                                    const _RingingBadge(
+                                        icon: Icons.volume_up, label: 'Sound'),
+                                  if (widget.alarm.alertMode.hasVibrate)
+                                    const _RingingBadge(
+                                        icon: Icons.vibration, label: 'Vibrate'),
+                                  if (widget.alarm.alertMode.hasFlashlight)
+                                    const _RingingBadge(
+                                        icon: Icons.flashlight_on, label: 'Flash'),
+                                ],
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: isCompact ? 20 : 40),
+
+                          // Action buttons
+                          Column(
+                            children: [
+                              // STOP button
+                              SizedBox(
+                                width: double.infinity,
+                                child: GradientButton(
+                                  label: 'STOP ALARM',
+                                  icon: Icons.stop_circle,
+                                  gradient: AppColors.urgentGradient,
+                                  fontSize: 20,
+                                  padding: const EdgeInsets.symmetric(vertical: 22),
+                                  onTap: _stopAlarm,
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+
+                              // Snooze button
+                              SizedBox(
+                                width: double.infinity,
+                                child: OutlinedButton.icon(
+                                  onPressed: _snooze,
+                                  icon: const Icon(Icons.snooze,
+                                      color: AppColors.textSecondary),
+                                  label: const Text(
+                                    'SNOOZE 5 MIN',
+                                    style: TextStyle(
+                                      color: AppColors.textSecondary,
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 15,
+                                    ),
+                                  ),
+                                  style: OutlinedButton.styleFrom(
+                                    padding: const EdgeInsets.symmetric(vertical: 18),
+                                    side: const BorderSide(
+                                        color: AppColors.textMuted, width: 1.5),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(18),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: isCompact ? 10 : 20),
+                        ],
                       ),
                     ),
                   ),
-                  const SizedBox(height: 12),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      if (widget.alarm.alertMode.hasSound)
-                        const _RingingBadge(
-                            icon: Icons.volume_up, label: 'Sound'),
-                      if (widget.alarm.alertMode.hasVibrate)
-                        const _RingingBadge(
-                            icon: Icons.vibration, label: 'Vibrate'),
-                      if (widget.alarm.alertMode.hasFlashlight)
-                        const _RingingBadge(
-                            icon: Icons.flashlight_on, label: 'Flash'),
-                    ],
-                  ),
-
-                  const Spacer(),
-
-                  // STOP button
-                  SizedBox(
-                    width: double.infinity,
-                    child: GradientButton(
-                      label: 'STOP ALARM',
-                      icon: Icons.stop_circle,
-                      gradient: AppColors.urgentGradient,
-                      fontSize: 20,
-                      padding: const EdgeInsets.symmetric(vertical: 22),
-                      onTap: _stopAlarm,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Snooze button
-                  SizedBox(
-                    width: double.infinity,
-                    child: OutlinedButton.icon(
-                      onPressed: _snooze,
-                      icon: const Icon(Icons.snooze,
-                          color: AppColors.textSecondary),
-                      label: const Text(
-                        'SNOOZE 5 MIN',
-                        style: TextStyle(
-                          color: AppColors.textSecondary,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 15,
-                        ),
-                      ),
-                      style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 18),
-                        side: const BorderSide(
-                            color: AppColors.textMuted, width: 1.5),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(18),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                ],
-              ),
+                );
+              }
             ),
           ),
         ),

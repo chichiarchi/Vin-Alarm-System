@@ -790,7 +790,7 @@ class _QuickChip extends StatelessWidget {
       onTap: onTap,
       child: Container(
         padding:
-            const EdgeInsets.symmetric(vertical: 12, horizontal: 10),
+            const EdgeInsets.symmetric(vertical: 12, horizontal: 6),
         decoration: BoxDecoration(
           color: color.withAlpha(25),
           borderRadius: BorderRadius.circular(14),
@@ -798,20 +798,26 @@ class _QuickChip extends StatelessWidget {
         ),
         child: Column(
           children: [
-            Text(
-              label,
-              style: TextStyle(
-                color: color,
-                fontWeight: FontWeight.w700,
-                fontSize: 13,
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                label,
+                style: TextStyle(
+                  color: color,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 13,
+                ),
               ),
             ),
             const SizedBox(height: 3),
-            Text(
-              sublabel,
-              style: const TextStyle(
-                color: AppColors.textMuted,
-                fontSize: 10,
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                sublabel,
+                style: const TextStyle(
+                  color: AppColors.textMuted,
+                  fontSize: 10,
+                ),
               ),
             ),
           ],
